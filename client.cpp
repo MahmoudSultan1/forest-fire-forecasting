@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include <iostream>
 #include "vector"
+#include <numeric>
 
 using namespace std;
 #define MAX_MSG 100
@@ -22,12 +23,15 @@ private:
     int sd, rc;
     struct sockaddr_in remoteServAddr; // server addresses
     int port;
+    int counter = 0;
     string hostServer;
     vector<int> readings;
+    vector<int> avgHist;      // to calculate the accumlation of the averages history
 
 public:
     client()
     {
+
         this->port = PORT;
         this->hostServer = SERVER;
     }
@@ -58,14 +62,22 @@ public:
     void AvgOverTime()
     {
         int sum = 0;
-        for (auto &it : readings)
-        {
-            sum = sum + it;
-        }
-        sum = sum / 5;
-        cout << "the average over time (5) is: " << sum << endl;
+        sum = accumulate(readings.begin(), readings.end(), 0);
+        sum = sum / 5; // getting the average
+        avgHist.push_back(sum);
+        cout << "the average over time  "
+             << " from: " << (counter * 5) - 5 << " to: " << counter * 5
+             << " seconds is:" << sum << "°C" << endl;
     }
 
+    void AccOverTime()
+    {
+        int sum = 0;
+        sum = accumulate(avgHist.begin(), avgHist.end(), 0);
+        sum = sum / avgHist.size();
+        cout << "the accumlation over time for the: "
+             << counter * 5 << " seconds is: " << sum << "°C\n" << endl ;
+    }
     void GetRequest()
     {
         serverLen = sizeof(remoteServAddr);
@@ -74,11 +86,12 @@ public:
                      (socklen_t *)&serverLen);
 
         readings.push_back(stoi(msg));
-        
+
         if (readings.size() == 5)
         {
+            counter++;
             AvgOverTime();
-            // AccOverTime();
+            AccOverTime();
             readings.clear();
         }
 
@@ -87,11 +100,11 @@ public:
             cout << "Cannot Recieve data" << endl;
         }
         /* print received message */
-        cout << "Echo From Server: " << msg << endl;
+        // cout << "Echo From Server: " << msg << endl;
     }
     void SendAdd()
     {
-        /* send an empty msg to the server*/
+        /* send an empty msg to the server for address acknowledgement */
         string empty;
         rc = sendto(sd, empty.c_str(), 0, 0,
                     (struct sockaddr *)&remoteServAddr,
