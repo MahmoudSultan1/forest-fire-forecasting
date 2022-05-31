@@ -29,7 +29,6 @@ public:
 
     void initServer()
     {
-        //  this->LOCAL_SERVER_PORT = port;
         this->sd = socket(AF_INET, SOCK_DGRAM, 0); // socket creation, sock_dgram for udp
         if (sd < 0)
         { // if failed then sd is smaller then 0
@@ -77,7 +76,7 @@ public:
         srand(time(0));
         int random = 10 + rand() % 30;
         // cout << to_string(random).c_str()<< endl;
-        usleep(1000000);
+        usleep(1000000); //sleeping seconds before sending again
         rc = sendto(sd, to_string(random).c_str(), strlen(to_string(random).c_str()) + 1, 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr));
         if (rc < 0) // if send faild
         {
