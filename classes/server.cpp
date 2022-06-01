@@ -42,7 +42,7 @@ public:
         this->rc = bind(sd, (struct sockaddr *)&servAddr, sizeof(servAddr));
         if (rc < 0)
         {
-            cout << " cannot bind port number " << port << " " << endl;
+            throw "cannot init server";
             exit(1);
         }
 
@@ -80,17 +80,12 @@ public:
         rc = sendto(sd, to_string(random).c_str(), strlen(to_string(random).c_str()) + 1, 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr));
         if (rc < 0) // if send faild
         {
-            cout << "Cannot send data\n";
+            throw "cannot send data";
             close(sd);
             exit(1);
         }
     }
+
+
 };
 
-int main(int argc, char *argv[])
-{
-    UDP_Server x;
-    x.initServer();
-    x.DoOperation();
-    return 0;
-}

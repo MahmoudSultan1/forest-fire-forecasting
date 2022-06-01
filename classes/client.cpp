@@ -26,7 +26,8 @@ private:
     int counter = 0;
     string hostServer;
     vector<int> readings;
-    vector<int> avgHist;      // to calculate the accumlation of the averages history
+    float accOverTime = 0;
+    int avgOverTime = 0;
 
 public:
     client()
@@ -46,7 +47,7 @@ public:
         this->sd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sd < 0)
         {
-            cout << "Cannot open socket !" << endl;
+            throw "failed to init";
             exit(1);
         }
     }
@@ -59,46 +60,38 @@ public:
         }
     }
 
-    void AvgOverTime()
-    {
-        int sum = 0;
-        sum = accumulate(readings.begin(), readings.end(), 0);
-        sum = sum / 5; // getting the average
-        avgHist.push_back(sum);
-        cout << "the average over time  "
-             << " from: " << (counter * 5) - 5 << " to: " << counter * 5
-             << " seconds is:" << sum << "°C" << endl;
-    }
-
-    void AccOverTime()
-    {
-        int sum = 0;
-        sum = accumulate(avgHist.begin(), avgHist.end(), 0);
-        sum = sum / avgHist.size();
-        cout << "the accumlation over time for the: "
-             << counter * 5 << " seconds is: " << sum << "°C\n" << endl ;
-    }
     void GetRequest()
     {
         serverLen = sizeof(remoteServAddr);
         n = recvfrom(sd, msg, MAX_MSG, 0,
                      (struct sockaddr *)&remoteServAddr,
                      (socklen_t *)&serverLen);
-
-        readings.push_back(stoi(msg));
-
-        if (readings.size() == 5)
-        {
-            counter++;
-            AvgOverTime();
-            AccOverTime();
-            readings.clear();
-        }
-
         if (n < 0)
         {
             cout << "Cannot Recieve data" << endl;
+            close(sd);
+            exit(1);
         }
+        readings.push_back(stoi(msg));
+
+        if (readings.size() > 1) // checking if readings has atleast 2 values
+        {
+            int curr = readings[readings.size() - 1];
+            int prev = readings[readings.size() - 2];
+
+            AccOverTime(curr, prev);
+        }
+        AvgOverTime();
+
+        if (readings.size() % 5 == 0) // printing the
+        {
+            counter++;
+            cout << "Accumlation over time is " << accOverTime << endl;
+            cout << "the average over time  "
+                 << "for " << counter * 5
+                 << " seconds is: " << avgOverTime << "°C" << endl;
+        }
+
         /* print received message */
         // cout << "Echo From Server: " << msg << endl;
     }
@@ -111,21 +104,40 @@ public:
                     sizeof(remoteServAddr));
         if (rc < 0)
         {
-            cout << "Cannot send data !" << endl;
+            throw "cannot send";
             close(sd);
             exit(1);
         }
+    }
+
+    void setReadings(int x)
+    {
+        this->readings.push_back(x);
+    }
+
+    float getAccOverTime()
+    {
+        return accOverTime;
+    }
+    int getAvgOverTime()
+    {
+        return avgOverTime;
+    }
+
+    void AvgOverTime()
+    {
+        int sum = 0;
+        sum = accumulate(readings.begin(), readings.end(), 0);
+        avgOverTime = sum / readings.size(); // getting the average
+    }
+
+    /* Assumption: The accumlation over time is calculated as a summation of the change in temprature*/
+    void AccOverTime(int curr, int prev)
+    {
+        accOverTime += curr - prev;
     }
 
     ~client()
     {
     }
 };
-
-int main(int argc, char *argv[])
-{
-    client x;
-    x.initClient();
-    x.DoOperation();
-    return 1;
-}
