@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sultan/Desktop/forest_forecast/classes/server.cpp
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+arpa/inet.h
+-
+netdb.h
+-
+stdio.h
+-
+unistd.h
+-
+string.h
+-
+iostream
+-
+bits/stdc++.h
+-
+
+/home/sultan/Desktop/forest_forecast/serverRun.cpp
+./classes/server.cpp
+/home/sultan/Desktop/forest_forecast/classes/server.cpp
+

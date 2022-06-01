@@ -51,14 +51,6 @@ public:
             exit(1);
         }
     }
-    void DoOperation()
-    {
-        SendAdd();
-        while (1)
-        {
-            GetRequest();
-        }
-    }
 
     void GetRequest()
     {
@@ -135,6 +127,15 @@ public:
     void AccOverTime(int curr, int prev)
     {
         accOverTime += curr - prev;
+    }
+
+    void DoOperation()
+    {
+        SendAdd();
+        while (1)
+        {
+            GetRequest();
+        }
     }
 
     ~client()

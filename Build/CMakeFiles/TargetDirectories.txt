@@ -1,0 +1,5 @@
+/home/sultan/Desktop/forest_forecast/Build/CMakeFiles/rebuild_cache.dir
+/home/sultan/Desktop/forest_forecast/Build/CMakeFiles/edit_cache.dir
+/home/sultan/Desktop/forest_forecast/Build/CMakeFiles/test.dir
+/home/sultan/Desktop/forest_forecast/Build/CMakeFiles/client.dir
+/home/sultan/Desktop/forest_forecast/Build/CMakeFiles/server.dir

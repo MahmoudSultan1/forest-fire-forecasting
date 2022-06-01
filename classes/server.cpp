@@ -50,15 +50,6 @@ public:
         cout << "Waiting for data on port " << port << endl;
     }
 
-    void DoOperation()
-    {
-        GetRequest();
-        /* server infinite loop */
-        while (1)
-        {
-            SendTemp();
-        }
-    }
     void GetRequest()
     {
 
@@ -69,14 +60,13 @@ public:
         n = recvfrom(sd, msg, MAX_MSG, 0,
                      (struct sockaddr *)&cliAddr, (socklen_t *)&cliLen);
         cout << "Connected to client: " << &cliAddr << endl;
-        
     }
     void SendTemp()
     {
         srand(time(0));
         int random = 10 + rand() % 30;
         // cout << to_string(random).c_str()<< endl;
-        usleep(1000000); //sleeping seconds before sending again
+        usleep(1000000); // sleeping seconds before sending again
         rc = sendto(sd, to_string(random).c_str(), strlen(to_string(random).c_str()) + 1, 0, (struct sockaddr *)&cliAddr, sizeof(cliAddr));
         if (rc < 0) // if send faild
         {
@@ -85,7 +75,13 @@ public:
             exit(1);
         }
     }
-
-
+    void DoOperation()
+    {
+        GetRequest();
+        /* server infinite loop */
+        while (1)
+        {
+            SendTemp();
+        }
+    }
 };
-

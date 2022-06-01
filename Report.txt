@@ -1,0 +1,40 @@
+This task is to implement forest fire forecasting. The idea is to open a communication channel between a server node and a client. The server side will act as a temperature sensor to send real-time temperatures to the client side, calculating the average temperature over time and accumulating temperature differences. Since the idea is to provide real-time communication, The connection was made using UDP sockets. This connectionless protocol speeds up communications by not formally establishing a connection before data is transferred compared to the TCP connection, which is a connection-oriented protocol that ensures data transmission without considering time as a factor.
+
+How it works: a server will run first and will wait for a client in the given port to establish the connection. Then, a client-side will run by sending an empty msg to the server for the server to get the client address. Finally, the server will send temperatures to the client every second, and the client will calculate the requirements and print them every 5 seconds.
+
+Two classes were created, UDP_server.cpp and client.cpp.
+
+--UDP_Server--
+
+UDP_Server() : Constructor that assign the connection port number.
+
+void initServer(): a method to initialize and create the socket connection.
+
+void GetRequest(): used to get the first empty msg to acknowledge the client address.
+
+void SendTemp(): method to send random temperatures assuming that they will vary from 10 to 40 degrees.
+
+void DoOperation(): method to first get the client request and then enters an infinite loop to keep sending temperatures.
+
+--client.cpp--
+
+client(): Constructor to assign a port number and server IP address 0.0.0.0 since they are running in localhost.
+
+void initClient(): a method to initialize and create the socket connection with the server.
+
+void GetRequest(): used to get the temperatures from the server and push the values into a vector to pass it to the average and accumulation functions; after 5 seconds, it will print the calculations.
+
+void SendAdd(): method to send an empty msg to the server.
+
+void setReadings(int x): used for manually filling readings for testing purposes.
+
+float getAccOverTime(): used to retrieve the updated accumlation over time.
+
+int getAvgOverTime():  used to retrieve the updated average over time.
+
+void AvgOverTime(): calculates the average over time by summing all readings and dividing by the total numbers of temperature readings.
+
+void AccOverTime: Calculate the accumulation over the time.
+Assumption: the accumulation over time is calculated as the summation of the differences between every two consecutive readings.
+
+void DoOperation(): method to first send a request to the server and then keeps reading the received temperatures.

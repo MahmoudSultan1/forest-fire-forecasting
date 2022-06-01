@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/client.dir/clientRun.cpp.o  -o client 
